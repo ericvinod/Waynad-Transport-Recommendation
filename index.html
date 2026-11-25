@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wayanad Group Trip — Transport Quotations Dashboard</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .tab-btn.active {
+      background-color: #065f46;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(6, 95, 70, 0.25);
+    }
+    .tab-btn:not(.active):hover {
+      background-color: #ecfdf5;
+      color: #065f46;
+    }
+    .filter-pill.active {
+      background-color: #0f172a;
+      color: #ffffff;
+    }
+    .split-pill.active {
+      background-color: #065f46;
+      color: #ffffff;
+      border-color: #065f46;
+    }
+    .whatsapp-bubble {
+      background-color: #dcf8c6;
+      border-radius: 12px 12px 4px 12px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+    .whatsapp-bg {
+      background-color: #efeae2;
+      background-image: radial-gradient(#d8d2c7 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    .toast {
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .toast.hidden-toast {
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
+  <!-- Header Banner -->
+  <header class="bg-gradient-to-r from-emerald-950 via-emerald-900 to-teal-900 text-white shadow-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-800/70 border border-emerald-600/40 text-emerald-200 text-xs font-medium mb-2">
+            <i data-lucide="trees" class="w-3.5 h-3.5"></i>
+            <span>Wayanad Year-End Group Trip • Dec 26 – 29, 2026</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Transport Quotations Dashboard</h1>
+          <p class="text-emerald-100/90 text-sm mt-1">
+            Mysore Railway Station ↔ Wayanad (3 Nights / 4 Days) • 16 Travelers (9 Adults + 7 Kids across 5 Families)
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <a href="https://g.co/kgs/frxtdjA" target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition border border-white/15">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-300"></i>
+            Stay Location
+          </a>
+          <button id="quickCopyWaBtn" type="button"
+                  class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-emerald-950 text-xs font-semibold transition shadow-sm">
+            <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+            Copy WhatsApp Update
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Strip -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-3.5">
+          <div class="text-xs text-emerald-200 font-medium">Recommended Quote</div>
+          <div class="text-xl sm:text-2xl font-bold mt-0.5">₹58,400</div>
+          <div class="text-xs text-emerald-100/80 mt-0.5">SM Tours • 16+1 Force Urbania</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-3.5">
+          <div class="text-xs text-emerald-200 font-medium">Cost Per Seat (16 Pax)</div>
+          <div class="text-xl sm:text-2xl font-bold mt-0.5">₹3,650</div>
+          <div class="text-xs text-emerald-100/80 mt-0.5">Only ₹87.50 more than TT</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-3.5">
+          <div class="text-xs text-emerald-200 font-medium">Quotes Evaluated</div>
+          <div class="text-xl sm:text-2xl font-bold mt-0.5">9 Quotes</div>
+          <div class="text-xs text-emerald-100/80 mt-0.5">2 Legal Finalists • 7 Ruled Out</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-3.5">
+          <div class="text-xs text-emerald-200 font-medium">Schedule Window</div>
+          <div class="text-xl sm:text-2xl font-bold mt-0.5">Dec 26 → 29</div>
+          <div class="text-xs text-emerald-100/80 mt-0.5">Pickup 1 PM • Drop 2 PM</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Navigation Tabs -->
+  <nav class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-2 overflow-x-auto">
+      <button type="button" data-tab="finalists" class="tab-btn active flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition">
+        <i data-lucide="award" class="w-4 h-4"></i>
+        <span>Recommendation &amp; Finalists</span>
+      </button>
+      <button type="button" data-tab="quotes" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 whitespace-nowrap transition">
+        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+        <span>All 9 Quotes</span>
+      </button>
+      <button type="button" data-tab="split" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 whitespace-nowrap transition">
+        <i data-lucide="calculator" class="w-4 h-4"></i>
+        <span>Family Cost Split</span>
+      </button>
+      <button type="button" data-tab="whatsapp" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 whitespace-nowrap transition">
+        <i data-lucide="send" class="w-4 h-4"></i>
+        <span>WhatsApp Message</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- TAB 1: RECOMMENDATION & FINALISTS -->
+    <section id="tab-finalists" class="tab-panel space-y-6">
+      <!-- Recommended Hero Card -->
+      <div class="bg-white rounded-2xl border-2 border-emerald-500 shadow-sm overflow-hidden">
+        <div class="bg-emerald-50 border-b border-emerald-200 px-5 py-3.5 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold uppercase tracking-wide">
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+              Recommended Quote
+            </span>
+            <span class="text-sm font-semibold text-emerald-950">SM Tours and Travels — Mysore</span>
+          </div>
+          <span class="text-xs font-medium text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full">
+            Factory-Fitted • Karnataka Legal • All-Inclusive
+          </span>
+        </div>
+
+        <div class="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left: Core Specs & Inclusions -->
+          <div class="lg:col-span-2 space-y-4">
+            <div class="flex flex-wrap items-baseline justify-between gap-3">
+              <div>
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900">16-Seater (+1 Driver) AC Force Urbania</h2>
+                <p class="text-sm text-slate-600 mt-0.5">Pickup &amp; Drop: Mysore Railway Station • Full disposal for 3N / 4D sightseeing</p>
+              </div>
+              <div class="text-left sm:text-right">
+                <div class="text-3xl font-extrabold text-emerald-700">₹58,400</div>
+                <div class="text-xs text-slate-500 font-medium">All-Inclusive • No hidden charges</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+              <div class="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg px-3 py-2 border border-slate-100">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                <span>Diesel / Fuel Charges Included</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg px-3 py-2 border border-slate-100">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                <span>Toll &amp; Parking Charges Included</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg px-3 py-2 border border-slate-100">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                <span>Driver Bata &amp; Food Included</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg px-3 py-2 border border-slate-100">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                <span>Kerala Checkpost &amp; Permit Included</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-slate-700 bg-emerald-50/70 rounded-lg px-3 py-2 border border-emerald-100 sm:col-span-2">
+                <i data-lucide="umbrella" class="w-4 h-4 text-emerald-700 shrink-0"></i>
+                <span><strong>Luggage Confirmed:</strong> Overhead luggage carrier with rain-protection cover included</span>
+              </div>
+            </div>
+
+            <!-- Payment Milestones -->
+            <div class="pt-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5">Payment Terms &amp; Milestones</h3>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3">
+                  <div class="text-[11px] font-semibold text-emerald-800 uppercase">1. Advance</div>
+                  <div class="text-lg font-bold text-slate-900 mt-0.5">₹5,000</div>
+                  <div class="text-[11px] text-slate-600">Booking confirmation</div>
+                </div>
+                <div class="rounded-xl border border-slate-200 bg-white p-3">
+                  <div class="text-[11px] font-semibold text-slate-500 uppercase">2. After Pickup</div>
+                  <div class="text-lg font-bold text-slate-900 mt-0.5">₹10,000</div>
+                  <div class="text-[11px] text-slate-600">Dec 26 pickup</div>
+                </div>
+                <div class="rounded-xl border border-slate-200 bg-white p-3">
+                  <div class="text-[11px] font-semibold text-slate-500 uppercase">3. After 2 Days</div>
+                  <div class="text-lg font-bold text-slate-900 mt-0.5">₹10,000</div>
+                  <div class="text-[11px] text-slate-600">Mid-trip milestone</div>
+                </div>
+                <div class="rounded-xl border border-slate-200 bg-white p-3">
+                  <div class="text-[11px] font-semibold text-slate-500 uppercase">4. Final Balance</div>
+                  <div class="text-lg font-bold text-slate-900 mt-0.5">₹33,400</div>
+                  <div class="text-[11px] text-slate-600">Before final drop</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Operator Contact & Quick Actions -->
+          <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="building-2" class="w-4 h-4 text-emerald-700"></i>
+                Operator &amp; Payment Details
+              </h3>
+              <div class="text-xs text-slate-600 space-y-2">
+                <div>
+                  <span class="font-semibold text-slate-800 block">SM Tours and Travels (Nagaraju)</span>
+                  <span>Mysore, Karnataka</span>
+                </div>
+                <div class="pt-1 border-t border-slate-200 space-y-1">
+                  <div><span class="text-slate-500">Phone / GPay:</span> <span class="font-mono font-semibold text-slate-800">+91 63632 06398</span></div>
+                  <div><span class="text-slate-500">PhonePe:</span> <span class="font-mono font-semibold text-slate-800">9845581440</span></div>
+                </div>
+                <div class="pt-1 border-t border-slate-200 space-y-1">
+                  <div class="font-semibold text-slate-800">Bank Transfer (Bank of Baroda)</div>
+                  <div><span class="text-slate-500">A/C Name:</span> SM TOURS AND TRAVEL</div>
+                  <div><span class="text-slate-500">A/C No:</span> <span class="font-mono font-semibold text-slate-800">05220200001054</span></div>
+                  <div><span class="text-slate-500">IFSC:</span> <span class="font-mono font-semibold text-slate-800">BARBOMYSORE</span> (Mysore 570001)</div>
+                </div>
+              </div>
+            </div>
+            <button id="goToSplitBtn" type="button"
+                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold transition">
+              <i data-lucide="calculator" class="w-4 h-4"></i>
+              Calculate Per-Family Share
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Head-to-Head Finalists Comparison -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Head-to-Head: The Only 2 Viable Options</h2>
+            <p class="text-xs text-slate-500">Comparing our 2 legal 16+ passenger finalists side by side</p>
+          </div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold">
+            <i data-lucide="scale" class="w-3.5 h-3.5"></i>
+            Price Gap: ₹1,400 total (₹87.50 / person)
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-50 text-slate-600 text-xs uppercase border-b border-slate-200">
+              <tr>
+                <th class="px-5 py-3 font-semibold">Comparison Factor</th>
+                <th class="px-5 py-3 font-semibold text-emerald-800 bg-emerald-50/50">
+                  Option A: 17-Seater Force Urbania (Mysore) ⭐
+                </th>
+                <th class="px-5 py-3 font-semibold text-slate-700">
+                  Option B: 17-Seater Tempo Traveller (Wayanad)
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="px-5 py-3 font-medium text-slate-700">Provider</td>
+                <td class="px-5 py-3 bg-emerald-50/30 font-semibold text-slate-900">SM Tours &amp; Travels (Nagaraju, Mysore)</td>
+                <td class="px-5 py-3 text-slate-700">Wayanad Property Caretaker (Manu / Caffeine Villa)</td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 font-medium text-slate-700">Total Package Cost</td>
+                <td class="px-5 py-3 bg-emerald-50/30 font-bold text-emerald-700 text-base">₹58,400 <span class="text-xs font-normal text-slate-500">(₹3,650 / seat)</span></td>
+                <td class="px-5 py-3 font-bold text-slate-800 text-base">₹57,000 <span class="text-xs font-normal text-slate-500">(₹3,563 / seat)</span></td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 font-medium text-slate-700">Vehicle Class &amp; Comfort</td>
+                <td class="px-5 py-3 bg-emerald-50/30 text-slate-800">Factory-fitted Force Urbania (16+1) — modern suspension &amp; cabin</td>
+                <td class="px-5 py-3 text-slate-700">Standard 17-seater Tempo Traveller (Kerala reg.)</td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 font-medium text-slate-700">AC Policy</td>
+                <td class="px-5 py-3 bg-emerald-50/30 text-slate-800">Full AC included (ON at all times except ghat section)</td>
+                <td class="px-5 py-3 text-slate-700">Revised from ₹47k Non-AC (+₹300/hr) to ₹57k AC (except ghat)</td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 font-medium text-slate-700">All-Inclusive Clarity</td>
+                <td class="px-5 py-3 bg-emerald-50/30 text-emerald-800 font-medium">Written quotation: Fuel, Toll, Parking, Driver Bata/Food, Kerala Permit all included</td>
+                <td class="px-5 py-3 text-amber-800">Quoted ₹57k total; earlier chat noted 7 AM–7 PM hours &amp; ₹500/day driver food (confirm if bundled)</td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 font-medium text-slate-700">Luggage Carrier</td>
+                <td class="px-5 py-3 bg-emerald-50/30 text-slate-800">Overhead carrier with rain-protection cover confirmed in quote</td>
+                <td class="px-5 py-3 text-slate-700">Not explicitly confirmed in written quote</td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 font-medium text-slate-700">TV / Entertainment</td>
+                <td class="px-5 py-3 bg-emerald-50/30 text-slate-800">Urbania standard setup (verify TV/USB before booking)</td>
+                <td class="px-5 py-3 text-rose-700 font-medium">Confirmed: TV not available / not working</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Legal Insights & Core Assumptions -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <div class="flex items-center gap-2 text-slate-900 font-bold">
+            <div class="p-2 rounded-lg bg-indigo-50 text-indigo-700">
+              <i data-lucide="shield-alert" class="w-4 h-4"></i>
+            </div>
+            <h3>Key Legal &amp; Seating Insights</h3>
+          </div>
+          <ul class="space-y-3 text-sm text-slate-700">
+            <li class="flex gap-2.5">
+              <span class="font-bold text-indigo-700 shrink-0">1.</span>
+              <div>
+                <strong>Karnataka bans 17-seater Tempo Travellers:</strong> Only 17-seater Force Urbania is allowed because it is factory-fitted, whereas 17-seater Tempo Travellers are modified after-market.
+                <a href="https://share.gemini.google/tNMVmXwJcJ8S" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline font-medium inline-flex items-center gap-0.5 ml-1">
+                  Reference <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+            </li>
+            <li class="flex gap-2.5">
+              <span class="font-bold text-indigo-700 shrink-0">2.</span>
+              <div>
+                <strong>Child Lap Rule (&lt;3 Years Only):</strong> Legally, only children under 3 years old may sit on adults' laps. Our 7 kids are aged 5 to 9 years, so all 16 travelers require individual seats (eliminating 13-seater and 14-seater options).
+                <a href="https://share.gemini.google/KBEXrXfzSvRk" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline font-medium inline-flex items-center gap-0.5 ml-1">
+                  Reference <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <div class="flex items-center gap-2 text-slate-900 font-bold">
+            <div class="p-2 rounded-lg bg-emerald-50 text-emerald-700">
+              <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+            </div>
+            <h3>Key Trip Assumptions Factored In</h3>
+          </div>
+          <ul class="space-y-3 text-sm text-slate-700">
+            <li class="flex gap-2.5">
+              <i data-lucide="wind" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+              <div>
+                <strong>Full-Time AC (Except Ghat Section):</strong> Even though December weather in Wayanad is pleasant, AC will stay ON throughout the journey (except steep ghat climbs) to keep windows closed against unexpected rain.
+              </div>
+            </li>
+            <li class="flex gap-2.5">
+              <i data-lucide="luggage" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+              <div>
+                <strong>Overhead Luggage Carrier + Rain Cover:</strong> Essential for 5 families' 4-day luggage so cabin legroom stays comfortable and bags stay dry.
+              </div>
+            </li>
+            <li class="flex gap-2.5">
+              <i data-lucide="ban" class="w-4 h-4 text-rose-500 shrink-0 mt-0.5"></i>
+              <div>
+                <strong>No 21-Seater Mini Buses:</strong> Ruled out based on previous group experience (wobbly ride and slow speed on hill roads).
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: ALL 9 QUOTES -->
+    <section id="tab-quotes" class="tab-panel hidden space-y-6">
+      <!-- Chart Card -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">All 9 Collected Quotations — Price Comparison</h2>
+            <p class="text-xs text-slate-500">Color-coded by eligibility for our 16-member group</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 text-xs font-medium">
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-emerald-600"></span>Recommended</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-amber-500"></span>Finalist</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-slate-400"></span>Ruled Out</span>
+          </div>
+        </div>
+        <div class="relative h-80">
+          <canvas id="quotesBarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" data-filter="all" class="filter-pill active px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-300 transition">
+            All Quotes (9)
+          </button>
+          <button type="button" data-filter="finalist" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition">
+            Legal Finalists (2)
+          </button>
+          <button type="button" data-filter="capacity" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition">
+            Too Small (&lt;16 Seats) (3)
+          </button>
+          <button type="button" data-filter="other" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition">
+            Mini Bus / Overpriced (4)
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="quoteSortSelect" class="text-xs font-medium text-slate-500">Sort by:</label>
+          <select id="quoteSortSelect" class="text-xs font-semibold text-slate-800 bg-white border border-slate-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="recommended">Recommended First</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="seats-desc">Seating Capacity: High to Low</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quotes Grid -->
+      <div id="quotesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- TAB 3: FAMILY COST SPLIT -->
+    <section id="tab-split" class="tab-panel hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Interactive Family Cost Split Calculator</h2>
+            <p class="text-xs text-slate-500">Compare per-family cost shares across our 5 families (9 Adults + 7 Kids = 16 Seats)</p>
+          </div>
+          <!-- Vehicle Toggle -->
+          <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200">
+            <button type="button" data-vehicle="sm_urbania" class="vehicle-toggle px-3.5 py-2 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-sm transition">
+              SM Urbania (₹58,400)
+            </button>
+            <button type="button" data-vehicle="wayanad_tt" class="vehicle-toggle px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+              Wayanad TT (₹57,000)
+            </button>
+          </div>
+        </div>
+
+        <!-- Split Method Selector -->
+        <div class="flex flex-wrap items-center gap-2 pt-1">
+          <span class="text-xs font-semibold text-slate-500 mr-1">Split Method:</span>
+          <button type="button" data-split="per-seat" class="split-pill active px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 transition">
+            By Seat Count (16 Seats) — Recommended
+          </button>
+          <button type="button" data-split="equal-family" class="split-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition">
+            Equal Split (5 Families)
+          </button>
+          <button type="button" data-split="per-adult" class="split-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition">
+            By Adults Only (9 Adults)
+          </button>
+        </div>
+
+        <!-- Split Summary & Chart -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div class="lg:col-span-2 overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-sm text-left">
+              <thead class="bg-slate-50 text-slate-600 text-xs uppercase border-b border-slate-200">
+                <tr>
+                  <th class="px-4 py-3 font-semibold">Family</th>
+                  <th class="px-4 py-3 font-semibold">Composition</th>
+                  <th class="px-4 py-3 font-semibold text-center">Seats</th>
+                  <th class="px-4 py-3 font-semibold text-right">Total Share</th>
+                  <th id="advanceColHeader" class="px-4 py-3 font-semibold text-right">₹5k Advance Share</th>
+                </tr>
+              </thead>
+              <tbody id="familySplitBody" class="divide-y divide-slate-100"></tbody>
+              <tfoot id="familySplitFoot" class="bg-emerald-50/70 font-bold text-slate-900 border-t border-emerald-200"></tfoot>
+            </table>
+          </div>
+
+          <div class="bg-slate-50 rounded-xl border border-slate-200 p-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">Family Share Breakdown</h3>
+            <div class="relative h-64">
+              <canvas id="familySplitChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: WHATSAPP MESSAGE -->
+    <section id="tab-whatsapp" class="tab-panel hidden space-y-5">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Ready-to-Share WhatsApp Group Message</h2>
+            <p class="text-xs text-slate-500">Formatted with emojis and WhatsApp bold styling for the Wayanad Travel Group</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <label class="inline-flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer select-none">
+              <input id="togglePaymentInWa" type="checkbox" class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" />
+              <span>Append SM Tours Payment Terms</span>
+            </label>
+            <button id="copyWaBtn" type="button"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+              Copy Message
+            </button>
+          </div>
+        </div>
+
+        <div class="p-5 sm:p-6 whatsapp-bg">
+          <div class="max-w-2xl mx-auto whatsapp-bubble p-4 sm:p-5 text-sm text-slate-900 leading-relaxed whitespace-pre-wrap font-sans" id="whatsappPreview"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Quote Detail Modal -->
+  <div id="quoteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h3 id="modalTitle" class="text-base font-bold text-slate-900">Quote Details</h3>
+        <button id="closeModalBtn" type="button" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="modalBody" class="p-5 space-y-4 text-sm text-slate-700 max-h-[75vh] overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden-toast fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5 text-sm font-medium">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastText">Copied to clipboard!</span>
+  </div>
+
+  <script>
+    const QUOTES = [
+      {
+        id: 'sm_urbania',
+        provider: 'SM Tours & Travels (Nagaraju)',
+        origin: 'Mysore',
+        vehicle: '16+1 AC Force Urbania (17-Seater)',
+        seats: 16,
+        ac: 'Full AC (except ghat)',
+        price: 58400,
+        category: 'finalist',
+        status: 'Recommended',
+        badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+        barColor: '#059669',
+        summary: 'Factory-fitted, legal in Karnataka, all-inclusive written quote with overhead rain-covered luggage carrier.',
+        breakup: [
+          'Diesel / Fuel Charges: Included',
+          'Toll & Parking Charges: Included',
+          'Driver Bata & Food Expenses: Included',
+          'Kerala Checkpost & Permit Charges: Included',
+          'Luggage: Overhead carrier with rain-protection cover confirmed'
+        ],
+        notes: 'Payment terms: ₹5,000 advance, ₹10,000 after pickup, ₹10,000 after 2 days, ₹33,400 before final drop. Contact: +91 63632 06398.'
+      },
+      {
+        id: 'wayanad_tt',
+        provider: 'Wayanad Caretaker (Manu / Caffeine Villa)',
+        origin: 'Wayanad',
+        vehicle: '17-Seater AC Tempo Traveller',
+        seats: 17,
+        ac: 'AC (except ghat)',
+        price: 57000,
+        category: 'finalist',
+        status: 'Finalist (Runner-Up)',
+        badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+        barColor: '#f59e0b',
+        summary: '₹1,400 cheaper than Urbania, but TV is not working and standard TT offers lower comfort than Urbania.',
+        breakup: [
+          'Base Non-AC 4-Day Package: ₹47,000',
+          'Revised Full-AC Total (except ghat): ₹57,000',
+          'Driver Accommodation: Free',
+          'Driver Food: ₹500/day (earlier chat — confirm if bundled in ₹57k)',
+          'Operating Window: 7:00 AM – 7:00 PM'
+        ],
+        notes: 'Caretaker confirmed TV is not available / not working. Separate 2-day Wayanad-only sightseeing quote was ₹11,000.'
+      },
+      {
+        id: 'sm_tt13',
+        provider: 'SM Tours & Travels (Nagaraju)',
+        origin: 'Mysore',
+        vehicle: '13+1 AC Tempo Traveller',
+        seats: 13,
+        ac: 'AC',
+        price: 32400,
+        category: 'capacity',
+        status: 'Ruled Out: Too Small',
+        badgeClass: 'bg-rose-100 text-rose-800 border-rose-200',
+        barColor: '#94a3b8',
+        summary: 'Only 13 passenger seats; cannot legally carry 16 people since all 7 kids are aged 5–9.',
+        breakup: [
+          'All-Inclusive Package: ₹32,400',
+          'Includes Toll, Parking, Driver Betta & Kerala Checkpost/State Tax (~₹5,000)'
+        ],
+        notes: 'Legally, only children under 3 years old can sit on adults’ laps.'
+      },
+      {
+        id: 'trendzz_tt14_nonac',
+        provider: 'Travel Trendzz Mysore (Saniya)',
+        origin: 'Mysore',
+        vehicle: '14-Seater Tempo Traveller (Non-AC)',
+        seats: 14,
+        ac: 'Non-AC',
+        price: 33500,
+        category: 'capacity',
+        status: 'Ruled Out: Too Small',
+        badgeClass: 'bg-rose-100 text-rose-800 border-rose-200',
+        barColor: '#94a3b8',
+        summary: 'Insufficient seats (14 vs 16 needed) and Non-AC.',
+        breakup: [
+          'Vehicle Fare (1,200 KM): ₹24,000',
+          'Driver Bata: ₹2,000',
+          'Toll & Parking: ₹2,000',
+          'Kerala Tax: ₹5,500'
+        ],
+        notes: 'Forwarded via Mysore friend. Contact: 9845580389 / 9449086953.'
+      },
+      {
+        id: 'trendzz_tt14_ac',
+        provider: 'Travel Trendzz Mysore (Saniya)',
+        origin: 'Mysore',
+        vehicle: '14-Seater Tempo Traveller (AC)',
+        seats: 14,
+        ac: 'AC',
+        price: 34700,
+        category: 'capacity',
+        status: 'Ruled Out: Too Small',
+        badgeClass: 'bg-rose-100 text-rose-800 border-rose-200',
+        barColor: '#94a3b8',
+        summary: 'Insufficient seats for 16 passengers (short by 2 seats).',
+        breakup: [
+          'Vehicle Fare (1,200 KM): ₹25,200',
+          'Driver Bata: ₹2,000',
+          'Toll & Parking: ₹2,000',
+          'Kerala Tax: ₹5,500'
+        ],
+        notes: 'Forwarded via Mysore friend. 3 Nights / 4 Days, 1,200 KM package.'
+      },
+      {
+        id: 'friend_bus21',
+        provider: 'Mysore Friend Contact (Shreyas Holidays)',
+        origin: 'Mysore',
+        vehicle: '21-Seater Mini Bus (KA 53 B 0719)',
+        seats: 21,
+        ac: 'Unspecified',
+        price: 38000,
+        category: 'other',
+        status: 'Ruled Out: Comfort',
+        badgeClass: 'bg-slate-200 text-slate-700 border-slate-300',
+        barColor: '#94a3b8',
+        summary: 'Group prefers TT/Urbania; past mini bus trips wobbled heavily and were too slow.',
+        breakup: [
+          '4-Day All-Inclusive Package: ₹38,000'
+        ],
+        notes: 'Vehicle photos attached in zip archive (Shreyas Holidays bus with LED interior).'
+      },
+      {
+        id: 'trendzz_bus21_nonac',
+        provider: 'Travel Trendzz Mysore (Saniya)',
+        origin: 'Mysore',
+        vehicle: '21-Seater Mini Bus (Non-AC)',
+        seats: 21,
+        ac: 'Non-AC',
+        price: 56900,
+        category: 'other',
+        status: 'Ruled Out: Mini Bus',
+        badgeClass: 'bg-slate-200 text-slate-700 border-slate-300',
+        barColor: '#94a3b8',
+        summary: 'Non-AC mini bus; high Kerala tax (₹12,000) and poor ride comfort.',
+        breakup: [
+          'Vehicle Fare (1,200 KM): ₹39,600',
+          'Driver Bata: ₹2,800',
+          'Toll & Parking: ₹2,500',
+          'Kerala Tax: ₹12,000'
+        ],
+        notes: 'Almost the same cost as the 16+1 AC Force Urbania!'
+      },
+      {
+        id: 'trendzz_bus21_ac',
+        provider: 'Travel Trendzz Mysore (Saniya)',
+        origin: 'Mysore',
+        vehicle: '21-Seater Mini Bus (AC)',
+        seats: 21,
+        ac: 'AC',
+        price: 58100,
+        category: 'other',
+        status: 'Ruled Out: Mini Bus',
+        badgeClass: 'bg-slate-200 text-slate-700 border-slate-300',
+        barColor: '#94a3b8',
+        summary: 'Costs ₹58,100 — virtually identical to SM Tours’ superior Force Urbania (₹58,400).',
+        breakup: [
+          'Vehicle Fare (1,200 KM): ₹40,800',
+          'Driver Bata: ₹2,800',
+          'Toll & Parking: ₹2,500',
+          'Kerala Tax: ₹12,000'
+        ],
+        notes: 'Mini bus rejected for wobbliness and slow hill climbing.'
+      },
+      {
+        id: 'friend_urbania',
+        provider: 'Mysore Friend Contact',
+        origin: 'Mysore',
+        vehicle: '16-Seater Force Urbania',
+        seats: 16,
+        ac: 'AC',
+        price: 65000,
+        category: 'other',
+        status: 'Ruled Out: Overpriced',
+        badgeClass: 'bg-slate-200 text-slate-700 border-slate-300',
+        barColor: '#94a3b8',
+        summary: '₹6,600 more expensive than SM Tours for the same vehicle, and operator stopped responding.',
+        breakup: [
+          '4-Day All-Inclusive Package: ₹65,000',
+          'Estimated Daily Limit: ~300–350 km/day'
+        ],
+        notes: 'Mysore friend reported no response to follow-up messages.'
+      }
+    ];
+
+    const FAMILIES = [
+      { id: 1, name: 'Family 1', adults: 2, kids: 1, kidAges: '5 yrs', seats: 3 },
+      { id: 2, name: 'Family 2', adults: 1, kids: 1, kidAges: '9 yrs', seats: 2 },
+      { id: 3, name: 'Family 3', adults: 2, kids: 2, kidAges: '6 & 9 yrs', seats: 4 },
+      { id: 4, name: 'Family 4', adults: 2, kids: 2, kidAges: '5 & 9 yrs', seats: 4 },
+      { id: 5, name: 'Family 5', adults: 2, kids: 1, kidAges: '6 yrs', seats: 3 }
+    ];
+
+    const state = {
+      activeTab: 'finalists',
+      quoteFilter: 'all',
+      quoteSort: 'recommended',
+      splitVehicle: 'sm_urbania',
+      splitMode: 'per-seat',
+      includePaymentInWa: false
+    };
+
+    let quotesChartInstance = null;
+    let splitChartInstance = null;
+
+    function formatINR(num) {
+      return '₹' + Math.round(num).toLocaleString('en-IN');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastText').textContent = msg;
+      toast.classList.remove('hidden-toast');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add('hidden-toast');
+      }, 2600);
+    }
+
+    function copyText(text, successMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(successMsg);
+        }).catch(() => fallbackCopy(text, successMsg));
+      } else {
+        fallbackCopy(text, successMsg);
+      }
+    }
+
+    function fallbackCopy(text, successMsg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg);
+      } catch (e) {
+        showToast('Please select and copy the text manually.');
+      }
+      document.body.removeChild(ta);
+    }
+
+    function getWhatsAppMessage() {
+      let msg = `🚐 *Wayanad Trip – Transport Quotations & Insights* 🌿
+
+📊 *Insights from the Information Collected*
+━━━━━━━━━━━━━━━━━━━━
+
+1️⃣ *Karnataka Rule:* Karnataka does *NOT* allow 17-seater Tempo Travellers ❌ — it only allows *17-seater Force Urbania* ✅
+
+❓ *Q:* Why is the 17-seater Urbania allowed and NOT the 17-seater Tempo Traveller?
+💡 *A:* The 17-seater Tempo Traveller is *NOT* factory-fitted, whereas the 17-seater Urbania *IS* factory-fitted, so it's legally allowed.
+🔗 https://share.gemini.google/tNMVmXwJcJ8S
+
+👶 *Child Seating Rule:* Legally, only children *under 3 years of age* are allowed on adults' laps.
+🔗 https://share.gemini.google/KBEXrXfzSvRk
+
+👨‍👩‍👧‍👦 We are *16 people (9 adults + 7 kids)*, so ideally we need at least a *16-seater* vehicle.
+
+🤔 *Questions to Decide So We Can Proceed*
+━━━━━━━━━━━━━━━━━━━━
+
+1️⃣ That leaves us with *2 viable options*:
+🚐 *17-seater Tempo Traveller from Wayanad* – *₹57,000*
+✨ *17-seater Force Urbania from Mysore* – *₹58,400* ⭐ *(Recommended – All-Inclusive)*
+
+📝 *Assumptions & Key Factors Taken Into Account*
+━━━━━━━━━━━━━━━━━━━━
+❄️ *1. AC ON at all times:* Even though the climate will be pleasant, AC should stay ON throughout (except ghat section travel) so we stay protected from rain at any time 🌧️
+🧳 *2. Overhead luggage carrier* with a *rain-protection cover* ☔`;
+
+      if (state.includePaymentInWa) {
+        msg += `
+
+💳 *SM Tours Urbania (₹58,400) – Payment Terms*
+• Booking Advance: ₹5,000
+• After Pickup: ₹10,000
+• After 2 Days: ₹10,000
+• Final Balance (before drop): ₹33,400
+✅ Includes Diesel, Toll, Parking, Driver Bata/Food & Kerala Permit`;
+      }
+      return msg;
+    }
+
+    function renderWhatsAppPreview() {
+      document.getElementById('whatsappPreview').textContent = getWhatsAppMessage();
+    }
+
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        const active = btn.dataset.tab === tabId;
+        btn.classList.toggle('active', active);
+        if (!active) {
+          btn.classList.add('text-slate-600');
+        } else {
+          btn.classList.remove('text-slate-600');
+        }
+      });
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('hidden', panel.id !== 'tab-' + tabId);
+      });
+      if (tabId === 'quotes') {
+        renderQuotesChart();
+        renderQuotesGrid();
+      } else if (tabId === 'split') {
+        renderSplitTableAndChart();
+      } else if (tabId === 'whatsapp') {
+        renderWhatsAppPreview();
+      }
+      lucide.createIcons();
+    }
+
+    function renderQuotesChart() {
+      const ctx = document.getElementById('quotesBarChart');
+      if (!ctx) return;
+      const sorted = [...QUOTES].sort((a, b) => a.price - b.price);
+      if (quotesChartInstance) quotesChartInstance.destroy();
+      quotesChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: sorted.map(q => `${q.vehicle.replace('Tempo Traveller', 'TT')} (${q.origin})`),
+          datasets: [{
+            label: 'Total Package Cost (₹)',
+            data: sorted.map(q => q.price),
+            backgroundColor: sorted.map(q => q.barColor),
+            borderRadius: 6,
+            barThickness: 22
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (c) => ` Total: ₹${c.raw.toLocaleString('en-IN')} (${sorted[c.dataIndex].status})`
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              grid: { color: '#f1f5f9' },
+              ticks: {
+                callback: (v) => '₹' + (v / 1000) + 'k'
+              }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    function renderQuotesGrid() {
+      let list = QUOTES.filter(q => state.quoteFilter === 'all' || q.category === state.quoteFilter);
+      if (state.quoteSort === 'price-asc') {
+        list.sort((a, b) => a.price - b.price);
+      } else if (state.quoteSort === 'price-desc') {
+        list.sort((a, b) => b.price - a.price);
+      } else if (state.quoteSort === 'seats-desc') {
+        list.sort((a, b) => b.seats - a.seats);
+      } else {
+        const order = { sm_urbania: 0, wayanad_tt: 1 };
+        list.sort((a, b) => (order[a.id] ?? 10) - (order[b.id] ?? 10) || a.price - b.price);
+      }
+
+      const grid = document.getElementById('quotesGrid');
+      grid.innerHTML = list.map(q => `
+        <div class="bg-white rounded-2xl border ${q.id === 'sm_urbania' ? 'border-emerald-500 ring-1 ring-emerald-500/30' : 'border-slate-200'} p-4 shadow-sm flex flex-col justify-between gap-3 hover:shadow-md transition">
+          <div class="space-y-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${q.badgeClass}">
+                ${q.status}
+              </span>
+              <span class="text-xs font-medium text-slate-500">${q.origin}</span>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">${q.vehicle}</h3>
+              <p class="text-xs text-slate-500 font-medium">${q.provider}</p>
+            </div>
+            <div class="flex items-baseline justify-between pt-1 border-t border-slate-100">
+              <span class="text-2xl font-extrabold ${q.id === 'sm_urbania' ? 'text-emerald-700' : 'text-slate-900'}">${formatINR(q.price)}</span>
+              <span class="text-xs text-slate-500 font-medium">${q.seats} Pax • ${q.ac}</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">${q.summary}</p>
+          </div>
+          <button type="button" data-quote-id="${q.id}" class="view-quote-btn w-full py-2 px-3 rounded-lg bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200 text-xs font-semibold text-slate-700 transition">
+            View Full Breakup &amp; Notes
+          </button>
+        </div>
+      `).join('');
+
+      grid.querySelectorAll('.view-quote-btn').forEach(btn => {
+        btn.addEventListener('click', () => openQuoteModal(btn.dataset.quoteId));
+      });
+    }
+
+    function openQuoteModal(quoteId) {
+      const q = QUOTES.find(item => item.id === quoteId);
+      if (!q) return;
+      document.getElementById('modalTitle').textContent = q.vehicle;
+      document.getElementById('modalBody').innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+          <div>
+            <div class="text-xs text-slate-500">Provider (${q.origin})</div>
+            <div class="font-bold text-slate-900">${q.provider}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-extrabold text-emerald-700">${formatINR(q.price)}</div>
+            <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold border ${q.badgeClass}">${q.status}</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="bg-slate-50 rounded-lg p-2.5 border border-slate-100">
+            <span class="text-slate-500 block">Seating Capacity</span>
+            <span class="font-bold text-slate-900">${q.seats} Passengers</span>
+          </div>
+          <div class="bg-slate-50 rounded-lg p-2.5 border border-slate-100">
+            <span class="text-slate-500 block">AC Configuration</span>
+            <span class="font-bold text-slate-900">${q.ac}</span>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Price Breakup &amp; Inclusions</h4>
+          <ul class="space-y-1.5 text-sm text-slate-700">
+            ${q.breakup.map(line => `<li class="flex items-start gap-2"><span class="text-emerald-600 font-bold">•</span><span>${line}</span></li>`).join('')}
+          </ul>
+        </div>
+        <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 text-xs text-amber-950">
+          <strong>Notes:</strong> ${q.notes}
+        </div>
+      `;
+      const modal = document.getElementById('quoteModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeQuoteModal() {
+      const modal = document.getElementById('quoteModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function renderSplitTableAndChart() {
+      const total = state.splitVehicle === 'sm_urbania' ? 58400 : 57000;
+      const advanceTotal = state.splitVehicle === 'sm_urbania' ? 5000 : 0;
+      document.getElementById('advanceColHeader').textContent =
+        state.splitVehicle === 'sm_urbania' ? '₹5k Advance Share' : 'Diff vs Urbania';
+
+      const shares = FAMILIES.map(f => {
+        let ratio = 0;
+        if (state.splitMode === 'per-seat') ratio = f.seats / 16;
+        else if (state.splitMode === 'equal-family') ratio = 1 / 5;
+        else ratio = f.adults / 9;
+
+        const share = total * ratio;
+        const secondary = state.splitVehicle === 'sm_urbania'
+          ? advanceTotal * ratio
+          : -1400 * ratio;
+        return { ...f, share, secondary };
+      });
+
+      const tbody = document.getElementById('familySplitBody');
+      tbody.innerHTML = shares.map(f => `
+        <tr class="hover:bg-slate-50/80">
+          <td class="px-4 py-3 font-bold text-slate-900">${f.name}</td>
+          <td class="px-4 py-3 text-xs text-slate-600">${f.adults} Adult${f.adults > 1 ? 's' : ''} + ${f.kids} Kid${f.kids > 1 ? 's' : ''} (${f.kidAges})</td>
+          <td class="px-4 py-3 text-center font-semibold text-slate-700">${f.seats}</td>
+          <td class="px-4 py-3 text-right font-bold text-emerald-700">${formatINR(f.share)}</td>
+          <td class="px-4 py-3 text-right font-semibold ${state.splitVehicle === 'sm_urbania' ? 'text-slate-700' : 'text-amber-700'}">
+            ${state.splitVehicle === 'sm_urbania' ? formatINR(f.secondary) : 'Saves ' + formatINR(Math.abs(f.secondary))}
+          </td>
+        </tr>
+      `).join('');
+
+      document.getElementById('familySplitFoot').innerHTML = `
+        <tr>
+          <td class="px-4 py-3">Total (5 Families)</td>
+          <td class="px-4 py-3 text-xs font-semibold text-slate-600">9 Adults + 7 Kids</td>
+          <td class="px-4 py-3 text-center">16</td>
+          <td class="px-4 py-3 text-right text-emerald-800">${formatINR(total)}</td>
+          <td class="px-4 py-3 text-right">${state.splitVehicle === 'sm_urbania' ? '₹5,000' : 'Saves ₹1,400'}</td>
+        </tr>
+      `;
+
+      const ctx = document.getElementById('familySplitChart');
+      if (splitChartInstance) splitChartInstance.destroy();
+      splitChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: shares.map(f => f.name),
+          datasets: [{
+            label: 'Family Share (₹)',
+            data: shares.map(f => Math.round(f.share)),
+            backgroundColor: ['#065f46', '#047857', '#059669', '#10b981', '#34d399'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (c) => ` Share: ₹${c.raw.toLocaleString('en-IN')}`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: '#e2e8f0' },
+              ticks: { callback: (v) => '₹' + (v / 1000) + 'k' }
+            },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // Event Listeners
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    document.getElementById('goToSplitBtn').addEventListener('click', () => switchTab('split'));
+
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        state.quoteFilter = pill.dataset.filter;
+        document.querySelectorAll('.filter-pill').forEach(p => {
+          const active = p.dataset.filter === state.quoteFilter;
+          p.classList.toggle('active', active);
+          if (!active) p.classList.add('bg-white', 'text-slate-700');
+          else p.classList.remove('bg-white', 'text-slate-700');
+        });
+        renderQuotesGrid();
+      });
+    });
+
+    document.getElementById('quoteSortSelect').addEventListener('change', (e) => {
+      state.quoteSort = e.target.value;
+      renderQuotesGrid();
+    });
+
+    document.querySelectorAll('.vehicle-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.splitVehicle = btn.dataset.vehicle;
+        document.querySelectorAll('.vehicle-toggle').forEach(b => {
+          const active = b.dataset.vehicle === state.splitVehicle;
+          b.className = active
+            ? 'vehicle-toggle px-3.5 py-2 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-sm transition'
+            : 'vehicle-toggle px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition';
+        });
+        renderSplitTableAndChart();
+      });
+    });
+
+    document.querySelectorAll('.split-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        state.splitMode = pill.dataset.split;
+        document.querySelectorAll('.split-pill').forEach(p => {
+          const active = p.dataset.split === state.splitMode;
+          p.classList.toggle('active', active);
+          if (!active) p.classList.add('bg-white', 'text-slate-700');
+          else p.classList.remove('bg-white', 'text-slate-700');
+        });
+        renderSplitTableAndChart();
+      });
+    });
+
+    document.getElementById('togglePaymentInWa').addEventListener('change', (e) => {
+      state.includePaymentInWa = e.target.checked;
+      renderWhatsAppPreview();
+    });
+
+    document.getElementById('copyWaBtn').addEventListener('click', () => {
+      copyText(getWhatsAppMessage(), 'WhatsApp message copied!');
+    });
+
+    document.getElementById('quickCopyWaBtn').addEventListener('click', () => {
+      copyText(getWhatsAppMessage(), 'WhatsApp message copied!');
+    });
+
+    document.getElementById('closeModalBtn').addEventListener('click', closeQuoteModal);
+    document.getElementById('quoteModal').addEventListener('click', (e) => {
+      if (e.target.id === 'quoteModal') closeQuoteModal();
+    });
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      renderWhatsAppPreview();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
